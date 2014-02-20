@@ -1,0 +1,8 @@
+cache/*
+microdrop_portable_base/*
+*.zip
+*.wixpdb
+*.wixobj
+.sconsign.dblite
+*.msi
+*.pyc

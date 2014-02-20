@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="en-us"
+    xmlns="http://schemas.microsoft.com/wix/2006/localization" Codepage="1252">
+    <String Id="LANG">1033</String>
+    <String Id="ProductName">MicroDrop</String>
+    <String Id="LicenseRtf" Overridable="yes">\Lang\en-us\EULA_en-us.rtf</String>
+    <String Id="ManufacturerName">Wheeler Microfluidics Lab</String>
+    <String Id="AppNotSupported">
+        This application is is not supported on your current OS. Minimal OS
+        supported is Windows XP SP2
+    </String>
+    <String Id="MustCloseApp">Must close !(loc.ProductName)!</String>
+    <String Id="AppNewerVersionInstalled">
+        A newer version of !(loc.ProductName) is already installed.
+    </String>
+</WixLocalization>

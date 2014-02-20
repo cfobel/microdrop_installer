@@ -6,11 +6,11 @@
   The version number has to be changed for upgrades. _It's not enough to just
   include newer files_.
   -->
-  <?define MajorVersion="1" ?>
-  <?define MinorVersion="0" ?>
-  <?define BuildVersion="0" ?>
+  <?define MajorVersion="0" ?>
+  <?define MinorVersion="1" ?>
+  <?define BuildVersion="713" ?>
   <!-- Revision is NOT used by WiX in the upgrade procedure -->
-  <?define Revision="0" ?>
+  <?define Revision="144478253" ?>
   <!-- Full version number to display -->
   <?define VersionNumber="$(var.MajorVersion).$(var.MinorVersion).$(var.BuildVersion).$(var.Revision)" ?>
   <!--
@@ -34,4 +34,5 @@
   that are not allowed in file-names.
   -->
   <?define AppShortName="MicroDrop" ?>
+  <?define SourceDir="C:\Users\Christian\Documents\GitHub\microdrop_installer\microdrop_portable_base\base" ?>
 </Include>
