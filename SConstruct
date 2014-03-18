@@ -4,7 +4,7 @@ from collections import OrderedDict
 import re
 
 import jinja2
-from path import path
+from path_helpers import path
 
 
 def build_wxi(target, source, env):
