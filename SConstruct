@@ -65,22 +65,11 @@ base_dir_path = path(portable_base_dir[0]).joinpath('base').abspath()
 microdrop_package_path = base_dir_path.joinpath('App', 'Lib', 'site-packages',
                                                 'microdrop')
 
-microdrop_package_url = ('http://microfluidics.utoronto.ca/downloads/'
-                         'microdrop-latest.tar.gz')
-
-#external = ['opencv_helpers', 'pygst_utils', 'microdrop_utility',
-            #'textbuffer_with_undo', 'application_repository',
-            #'task_scheduler', 'svg_model', 'geo_util', 'pygtkhelpers',
-            #'labix_constraint', 'jsonrpc', 'flatland']
 microdrop_python = base_dir_path.joinpath('App', 'python.exe')
-#allow_external = ' '.join('--allow-unverified %s' % e for e in external)
-allow_external = ' '
 pip_microdrop_package = env.Command('dummy', [], '%s '
                                     '%s\App\Scripts\pip-script.py install '
-                                    '--allow-all-external %s '
-                                    '%s' % (microdrop_python, base_dir_path,
-                                            allow_external,
-                                            microdrop_package_url))
+                                    '%s --pre' % (microdrop_python,
+                                                  base_dir_path, 'microdrop'))
 
 wix_header = env.Command('Includes/AppVariables.wxi', pip_microdrop_package,
                          build_wxi)

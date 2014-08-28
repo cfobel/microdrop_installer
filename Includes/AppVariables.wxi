@@ -8,9 +8,9 @@
   -->
   <?define MajorVersion="0" ?>
   <?define MinorVersion="1" ?>
-  <?define BuildVersion="713" ?>
+  <?define BuildVersion="735" ?>
   <!-- Revision is NOT used by WiX in the upgrade procedure -->
-  <?define Revision="144478253" ?>
+  <?define Revision="84611960" ?>
   <!-- Full version number to display -->
   <?define VersionNumber="$(var.MajorVersion).$(var.MinorVersion).$(var.BuildVersion).$(var.Revision)" ?>
   <!--
