@@ -46,7 +46,19 @@ def build_wxi(target, source, env):
     return None
 
 
-env = Environment(tools=['default', 'wix', 'unzip', 'url'], ENV=os.environ)
+# Set the MicroDrop package-name to install into the portable Python
+# environment.
+# __NB__ By default, we use the `--pre` flag to install the latest version of
+# `microdrop`, even if it is not a minor version release, _i.e.,_ micro-version
+# greater than 0.
+default_microdrop_package = 'microdrop --pre'
+AddOption('--microdrop-package', dest='microdrop_package', type='string',
+          nargs=1, action='store', metavar='MICRODROP_PKG',
+          help='`pip`-compatible MicroDrop package reference (default=`%s`)' %
+          default_microdrop_package, default=default_microdrop_package)
+
+env = Environment(tools=['default', 'wix', 'unzip', 'url'], ENV=os.environ,
+                  MICRODROP_PKG=GetOption('microdrop_package'))
 
 app_env = env.Clone()
 app_env.Append(WIXCANDLEFLAGS=['-ext', 'WixUIExtension.dll',
@@ -65,11 +77,15 @@ base_dir_path = path(portable_base_dir[0]).joinpath('base').abspath()
 microdrop_package_path = base_dir_path.joinpath('App', 'Lib', 'site-packages',
                                                 'microdrop')
 
+# Install the latest version of the `microdrop` Python package available on the
+# [Python Package Index][PyPI].
+#
+# [PyPI]: https://pypi.python.org/pypi
 microdrop_python = base_dir_path.joinpath('App', 'python.exe')
 pip_microdrop_package = env.Command('dummy', [], '%s '
                                     '%s\App\Scripts\pip-script.py install '
-                                    '%s --pre' % (microdrop_python,
-                                                  base_dir_path, 'microdrop'))
+                                    '$MICRODROP_PKG' % (microdrop_python,
+                                                        base_dir_path))
 
 wix_header = env.Command('Includes/AppVariables.wxi', pip_microdrop_package,
                          build_wxi)
