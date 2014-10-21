@@ -8,3 +8,4 @@ microdrop_portable_base/*
 *.pyc
 Fragments\FilesFragments.*
 Includes\AppVariables.wxi
+*~
