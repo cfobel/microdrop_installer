@@ -48,10 +48,9 @@ def build_wxi(target, source, env):
 
 # Set the MicroDrop package-name to install into the portable Python
 # environment.
-# __NB__ By default, we use the `--pre` flag to install the latest version of
-# `microdrop`, even if it is not a minor version release, _i.e.,_ micro-version
-# greater than 0.
-default_microdrop_package = 'microdrop --pre'
+# __NB__ By default, we do not specify a `microdrop` version.  This should
+# install the latest *minor* version.
+default_microdrop_package = 'microdrop'
 AddOption('--microdrop-package', dest='microdrop_package', type='string',
           nargs=1, action='store', metavar='MICRODROP_PKG',
           help='`pip`-compatible MicroDrop package reference (default=`%s`)' %
