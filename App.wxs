@@ -77,28 +77,25 @@
     <!-- Add launcher script, which calls the portable-Python executable to run
          the `microdrop.microdrop` Python package as an application. -->
     <Component Id="LauncherComponent" Directory="INSTALLFOLDER" Guid="*">
-        <File Id="LauncherFile" KeyPath="yes" Source="$(var.ResourcesDir)\microdrop.bat" />
+        <File Id="LauncherFile" KeyPath="yes" Source="$(var.ResourcesDir)\Microdrop.exe" />
     </Component>
     <!-- Step 2: Add the shortcut to your installer package -->
     <Component Id="ApplicationShortcut" Directory="ApplicationProgramsFolder" Guid="*" >
-        <!-- Link to [command-prompt][1] instead of linking to the batch script
-             directly, to allow pinning the shortcut to the task bar in Windows
-             7 and Window 8.
+        <!-- Use [`&quot;` to escape quotes][1] around target path.  The target
+             path must be enclosed in quotes to support paths containing
+             spaces.
 
-             Use [`&quot;` to escape quotes][2] around installation path.  The
-             installation path must be enclosed in quotes to support paths
-             containing spaces.
-
-             [1]: http://mattrefghi.com/blog/2012/06/how-to-pin-a-batch-file-to-the-taskbar-in-windows-7/
-             [2]: http://stackoverflow.com/questions/650821/how-do-i-escape-double-quotes-in-attributes-in-an-xml-string-in-t-sql
+             [1]: http://stackoverflow.com/questions/650821/how-do-i-escape-double-quotes-in-attributes-in-an-xml-string-in-t-sql
         -->
         <Shortcut Id="ApplicationStartMenuShortcut" Name="!(loc.ProductName)"
             Description="!(loc.ProductName)"
-            Target="[SYSTEM_FOLDER]cmd.exe"
-            Arguments="/c &quot;[INSTALLFOLDER]microdrop.bat&quot;"
+            Target="[INSTALLFOLDER]Microdrop.exe"
             WorkingDirectory="INSTALLFOLDER"
             Icon="$(var.AppShortName)Icon.ico" />
         <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+        <!-- Since a shortcut is not a regular file, the following registry
+             entry is necessary for the shortcut to be accounted for as an
+             installed file. -->
         <RegistryValue Root="HKCU" Key="Software\Microsoft\$(var.AppShortName)"
             Name="installed" Type="integer" Value="1" KeyPath="yes"/>
     </Component>
