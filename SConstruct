@@ -15,83 +15,52 @@ def build_wxi(target, source, env):
     The header includes details such as the MicroDrop application version
     number, which is also used as the version number for the installer.
     '''
-    # Use `pkg_resources` to determine the version of the MicroDrop Python
-    # package that was installed in the portable-Python environment to be
-    # included in the installer.  The version of the MicroDrop package is also
-    # used as the version number for the installer.
-    version_text = check_output('%s -c "import pkg_resources; print '
-                                'pkg_resources.get_distribution'
-                                '(\'microdrop\')"' % microdrop_python)
-    # Parse the version number components from the MicroDrop version string
-    # returned from `pkg_resources`.  These version components are used to
-    # populate the corresponding version tags in the WiX header template.
-    version_match = re.search(r'microdrop (?P<major>\d+)\.(?P<minor>\d+)'
-                              '\.post(?P<post>\d+)\.dev(?P<dev>\d+)',
-                              version_text)
-    version_tags = OrderedDict([(k, version_match.group(k))
-                                for k in ('major', 'minor', 'post', 'dev')])
-
     wxi_template = jinja2.Template(path('Includes/AppVariables.wxi.skeleton')
                                    .bytes())
     # Render the WiX template using the MicroDrop version tags, as well as the
     # path to the base directory of the PortablePython distribution to be
     # bundled by the installer.
-    wxi_text = wxi_template.render({'major_version': version_tags['major'],
-                                    'minor_version': version_tags['minor'],
-                                    'build_version': version_tags['post'],
-                                    'revision': version_tags['dev'],
-                                    'sourcedir': base_dir_path})
+    wxi_text = wxi_template.render({'sourcedir': base_dir_path})
     with open(str(target[0]), 'w') as out:
         out.write(wxi_text)
     return None
 
 
-# Set the MicroDrop package-name to install into the portable Python
-# environment.
-# __NB__ By default, we do not specify a `microdrop` version.  This should
-# install the latest *minor* version.
-default_microdrop_package = 'microdrop'
-AddOption('--microdrop-package', dest='microdrop_package', type='string',
-          nargs=1, action='store', metavar='MICRODROP_PKG',
-          help='`pip`-compatible MicroDrop package reference (default=`%s`)' %
-          default_microdrop_package, default=default_microdrop_package)
-
-env = Environment(tools=['default', 'wix', 'unzip', 'url'], ENV=os.environ,
-                  MICRODROP_PKG=GetOption('microdrop_package'))
+env = Environment(tools=['default', 'wix', 'unzip', 'url'], ENV=os.environ)
 
 app_env = env.Clone()
 app_env.Append(WIXCANDLEFLAGS=['-ext', 'WixUIExtension.dll',
                                '-ext', 'WixUtilExtension.dll'])
 
+# Set the MicroDrop package-name to install into the portable Python
+# environment.
+# __NB__ By default, we do not specify a `microdrop` version.  This should
+# install the latest *minor* version.
+default_microdrop_zip = 'microdrop_portable.zip'
+AddOption('--microdrop-zip', dest='microdrop_zip', type='string',
+          nargs=1, action='store', metavar='MICRODROP_ZIP',
+          help='Name of portable microdrop zip file in `downloads` dir on '
+          '`microfluidics.utoronto.ca` (default=`%s`)' %
+          default_microdrop_zip, default=default_microdrop_zip)
+
+MICRODROP_ZIP = GetOption('microdrop_zip')
+MICRODROP_NAME = path(MICRODROP_ZIP).namebase
+
 # Download `zip` archive containing Portable Python base distribution.
-portable_base_zip = env.Download('microdrop_portable_base.zip',
+portable_base_zip = env.Download('microdrop_portable.zip',
                                  'http://microfluidics.utoronto.ca/downloads/'
-                                 'microdrop_portable_base-python_2.7.5.1.zip')
+                                 + MICRODROP_ZIP)
 
 # Extract PortablePython base distribution.
-portable_base_dir = env.UnZip('microdrop_portable_base', portable_base_zip)
+portable_base_dir = env.UnZip('microdrop_portable', portable_base_zip)
 
-base_dir_path = path(portable_base_dir[0]).joinpath('base').abspath()
+extracted_root = path(portable_base_dir[0]).expand()
+base_dir_path = extracted_root.dirs()[0]
 
-microdrop_package_path = base_dir_path.joinpath('App', 'Lib', 'site-packages',
-                                                'microdrop')
-
-# Install the latest version of the `microdrop` Python package available on the
-# [Python Package Index][PyPI].
-#
-# [PyPI]: https://pypi.python.org/pypi
-microdrop_python = base_dir_path.joinpath('App', 'python.exe')
-pip_microdrop_package = env.Command('dummy', [], '%s '
-                                    '%s\App\Scripts\pip-script.py install '
-                                    '$MICRODROP_PKG' % (microdrop_python,
-                                                        base_dir_path))
-
-wix_header = env.Command('Includes/AppVariables.wxi', pip_microdrop_package,
+wix_header = env.Command('Includes/AppVariables.wxi', portable_base_dir,
                          build_wxi)
 
-Depends(pip_microdrop_package, portable_base_dir)
 AlwaysBuild(wix_header)
-AlwaysBuild(pip_microdrop_package)
 
 # Generate a WiX source file containing references to all files from the
 # PortablePython distribution.

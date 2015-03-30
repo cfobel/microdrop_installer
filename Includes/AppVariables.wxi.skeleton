@@ -6,13 +6,10 @@
   The version number has to be changed for upgrades. _It's not enough to just
   include newer files_.
   -->
-  <?define MajorVersion="{{ major_version }}" ?>
-  <?define MinorVersion="{{ minor_version }}" ?>
-  <?define BuildVersion="{{ build_version }}" ?>
   <!-- Revision is NOT used by WiX in the upgrade procedure -->
   <?define Revision="{{ revision }}" ?>
   <!-- Full version number to display -->
-  <?define VersionNumber="$(var.MajorVersion).$(var.MinorVersion).$(var.BuildVersion).$(var.Revision)" ?>
+  <?define VersionNumber="1.0.0.0" ?>
   <!--
   Upgrade code HAS to be the same for all updates.
   Once you've chosen it don't change it.
