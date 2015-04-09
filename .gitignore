@@ -1,5 +1,5 @@
 cache/*
-microdrop_portable_base/*
+microdrop_portable/*
 *.zip
 *.wixpdb
 *.wixobj
