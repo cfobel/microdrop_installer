@@ -124,7 +124,7 @@ def check_url(url):
 
 def download_file(url, io, output_path):
     # TODO: Fix `download_file` implementation _(taken from
-    # `install_dependencies.py`)_.  Use to download MicroDrop custom
+    # `install_dependencies.py`)_.  Use to download Microdrop custom
     # PortablePython distribution, currently located in `/home/christian` on
     # `microfluidics.utoronto.ca`.
     downloaded = 0

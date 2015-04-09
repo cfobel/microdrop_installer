@@ -12,7 +12,7 @@ import zipfile
 portable_base_dir = path('microdrop_portable')
 # Check if the portable base folder exists, otherwise download and extract it
 if not path(portable_base_dir).exists():
-    zip_file_name = path('%s.zip' % portable_base_dir.namebase)
+    zip_file_name = path('%s.zip' % portable_base_dir)
     if not zip_file_name.exists():
         print 'Downloading portable python base...'
         wget.download('http://microfluidics.utoronto.ca/downloads/%s' % zip_file_name)
@@ -26,12 +26,12 @@ def build_wxi(target, source, env):
     Build WiX header file, defining the application details for the current
     installer build.
 
-    The header includes details such as the MicroDrop application version
+    The header includes details such as the Microdrop application version
     number, which is also used as the version number for the installer.
     '''
     wxi_template = jinja2.Template(path('Includes/AppVariables.wxi.skeleton')
                                    .bytes())
-    # Render the WiX template using the MicroDrop version tags, as well as the
+    # Render the WiX template using the Microdrop version tags, as well as the
     # path to the base directory of the PortablePython distribution to be
     # bundled by the installer.
     wxi_text = wxi_template.render({'sourcedir': base_dir_path})
@@ -77,13 +77,13 @@ files_wxs = app_env.Wxs('Fragments\FilesFragments.wxs', wix_header,
                          # thus, are not available in the registry.
                          '-sreg'])
 
-# Generate a WiX object file containing the MicroDrop project layout.
+# Generate a WiX object file containing the Microdrop project layout.
 # __NB__ This WiX object file does not contain the components corresponding to
 # the files from the PortablePython distribution.
-app_obj = app_env.WiXObject('MicroDropApp.wixobj', ['App.wxs'])
+app_obj = app_env.WiXObject('MicrodropApp.wixobj', ['App.wxs'])
 
 # Generate a WiX object file containing the PortablePython distribution.
-files_obj = env.WiXObject('MicroDropFiles.wixobj', files_wxs)
+files_obj = env.WiXObject('MicrodropFiles.wixobj', files_wxs)
 
 # Compile a Windows installer installation package from the Wix object files.
 installer = app_env.WiX('microdrop-en-us.msi', [app_obj, files_obj],

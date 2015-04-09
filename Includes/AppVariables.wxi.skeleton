@@ -25,11 +25,11 @@
   when updating and creating the desktop shortcut
   -->
   <?define ExeProcessName="python.exe" ?>
-  <?define IconPath="$(var.ResourcesDir)\MicroDrop.ico" ?>
+  <?define IconPath="$(var.ResourcesDir)\Microdrop.ico" ?>
   <!--
   A short label for your application, containing no-spaces, and no characters
   that are not allowed in file-names.
   -->
-  <?define AppShortName="MicroDrop" ?>
+  <?define AppShortName="Microdrop" ?>
   <?define SourceDir="{{ sourcedir }}" ?>
 </Include>
