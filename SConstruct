@@ -5,6 +5,20 @@ import re
 
 import jinja2
 from path_helpers import path
+import wget
+import zipfile
+
+
+portable_base_dir = path('microdrop_portable')
+# Check if the portable base folder exists, otherwise download and extract it
+if not path(portable_base_dir).exists():
+    zip_file_name = path('%s.zip' % portable_base_dir.namebase)
+    if not zip_file_name.exists():
+        print 'Downloading portable python base...'
+        wget.download('http://microfluidics.utoronto.ca/downloads/%s' % zip_file_name)
+    print "Extracting..."
+    with zipfile.ZipFile(zip_file_name, "r") as z:
+        z.extractall(portable_base_dir)
 
 
 def build_wxi(target, source, env):
@@ -32,30 +46,7 @@ app_env = env.Clone()
 app_env.Append(WIXCANDLEFLAGS=['-ext', 'WixUIExtension.dll',
                                '-ext', 'WixUtilExtension.dll'])
 
-# Set the MicroDrop package-name to install into the portable Python
-# environment.
-# __NB__ By default, we do not specify a `microdrop` version.  This should
-# install the latest *minor* version.
-default_microdrop_zip = 'microdrop_portable.zip'
-AddOption('--microdrop-zip', dest='microdrop_zip', type='string',
-          nargs=1, action='store', metavar='MICRODROP_ZIP',
-          help='Name of portable microdrop zip file in `downloads` dir on '
-          '`microfluidics.utoronto.ca` (default=`%s`)' %
-          default_microdrop_zip, default=default_microdrop_zip)
-
-MICRODROP_ZIP = GetOption('microdrop_zip')
-MICRODROP_NAME = path(MICRODROP_ZIP).namebase
-
-# Download `zip` archive containing Portable Python base distribution.
-portable_base_zip = env.Download('microdrop_portable.zip',
-                                 'http://microfluidics.utoronto.ca/downloads/'
-                                 + MICRODROP_ZIP)
-
-# Extract PortablePython base distribution.
-portable_base_dir = env.UnZip('microdrop_portable', portable_base_zip)
-
-extracted_root = path(portable_base_dir[0]).expand()
-base_dir_path = extracted_root.dirs()[0]
+base_dir_path = portable_base_dir.dirs()[0]
 
 wix_header = env.Command('Includes/AppVariables.wxi', portable_base_dir,
                          build_wxi)
